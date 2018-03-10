@@ -1,0 +1,60 @@
+CREATE OR REPLACE PROCEDURE c_Cal(price number )
+
+IS
+
+v_pcode number;
+v_pname varchar2(12);
+v_price number;
+v_quanPurchase number;
+v_totalCost number;
+
+no_data_found exception;
+price_required exception;
+
+CURSOR C1 IS SELECT p_code,p_name,p_price, quan_purchase FROM product WHERE p_price = price ;
+
+BEGIN
+	OPEN C1;
+	
+	FETCH C1 INTO v_pcode,v_pname,v_price,v_quanPurchase,v_totalCost;
+	
+	IF v_price IS NULL THEN 
+		
+	RAISE price_required ;
+
+	END IF;
+	
+	IF C1%NOTFOUND THEN
+	
+		RAISE NO_Data_FOUND;
+	
+	ELSE 
+	
+		WHILE C1%FOUND LOOP
+
+			v_totalcost := v_price * v_quanPurchase;
+			dbms_output.put_line(v_pcode ||' '||v_pname ||' '||v_quanPurchase||' '||v_totalCost);
+	
+			FETCH C1 INTO v_pcode,v_pname,v_price,v_quanPurchase,v_totalCost;
+	
+		END LOOP;
+	END IF;
+	
+	CLOSE C1;
+
+EXCEPTION
+ 
+WHEN no_data_found THEN
+
+dbms_output.put_line( 'p_code' || 'Does not exist');
+
+WHEN price_required THEN 
+
+dbms_output.put_line ('p_price' || 'Enter valid product price');
+END;
+
+
+
+	
+
+
