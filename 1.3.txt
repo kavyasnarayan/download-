@@ -1,0 +1,36 @@
+CREATE OR REPLACE PROCEDURE Empl(Empnumber NUMBER)
+
+IS
+
+v_empnumber NUMBER(5);
+V_ename VARCHAR2(10);
+v_job VARCHAR2(9);
+V_mgr NUMBER(4);
+v_hiredate DATE;
+v_sal NUMBER(7,2);
+v_comm NUMBER(7,2);
+v_deptno NUMBER(2);
+
+NO_EMPNO_FOUND EXCEPTION;
+
+BEGIN 
+
+	SELECT empno,ename,job,mgr,hiredate,sal,comm,deptno INTO v_empnumber,v_ename,v_job,
+	v_mgr,v_hiredate,v_sal,v_comm,v_deptno FROM emp WHERE empno=Empnumber;
+
+IF v_Empnumber IS NULL THEN
+RAISE NO_EMPNO_FOUND;
+
+ELSE
+	
+	DBMS_OUTPUT.PUT_LINE(v_empnumber||' '||v_ename||' '||v_job||' '||v_mgr||' '||v_hiredate||' '||v_sal||' '||
+	v_comm||' '||v_deptno);
+
+END IF;
+
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE(Empnumber||' '||'Not a valid empid');
+WHEN NO_EMPNO_FOUND THEN
+DBMS_OUTPUT.PUT_LINE('data NOT found');
+END;

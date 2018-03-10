@@ -1,0 +1,42 @@
+CREATE OR REPLACE PROCEDURE empsalary(p_deptno 	NUMBER)
+
+IS
+
+v_deptno NUMBER(4);
+v_ename VARCHAR2(15);
+v_sal NUMBER(7,2);
+V_salincrease NUMBER(7,2);
+v_newsal NUMBER(7,2);
+NO_EMPDETAILS_FOUND EXCEPTION;
+
+CURSOR SALARY IS SELECT ename,sal FROM emp WHERE deptno=p_deptno;
+
+BEGIN
+
+	OPEN SALARY;
+	FETCH SALARY INTO v_ename,v_sal;
+
+	IF SALARY%NOTFOUND THEN
+	RAISE NO_EMPDETAILS_FOUND;
+
+	ELSE
+	WHILE SALARY%FOUND
+	LOOP
+	v_salincrease:=(30*v_sal)/100;
+
+		IF v_salincrease>5000 THEN
+		v_newsal:=v_sal+5000;
+		ELSE
+		v_newsal:=v_sal+v_salincrease;
+		END IF;
+	FETCH SALARY INTO v_ename,v_sal;
+	DBMS_OUTPUT.PUT_LINE(v_ename||' '||v_sal||' '||v_salincrease||' '||v_newsal);
+	END LOOP;
+	END IF;
+	CLOSE SALARY;
+EXCEPTION
+	WHEN NO_EMPDETAILS_FOUND THEN
+	DBMS_OUTPUT.PUT_LINE(v_deptno|| 'Employee details not found');
+	WHEN OTHERS THEN
+	DBMS_OUTPUT.PUT_LINE('Invalid input');
+END;

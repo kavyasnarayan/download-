@@ -1,0 +1,137 @@
+--***********************************
+--CREATING TABLE customer  (PARENT)
+--**********************************
+
+CREATE TABLE customer(
+cust_id NUMBER(4) PRIMARY KEY,
+cust_name VARCHAR2(20),
+email VARCHAR2(40),
+mobile number(10),
+address VARCHAR2(50)
+);
+
+--***********************************
+--CREATING TABLE  Feedback (CHILD)
+--**********************************
+CREATE TABLE Feedback(
+Feed_BackID NUMBER(4) PRIMARY KEY,
+cust_id NUMBER(4) REFERENCES customer(cust_id) ,
+Vehicle_NO VARCHAR2(20),
+Vehicle_Type VARCHAR2(10),
+Service_date DATE,
+Rating NUMBER(2)
+);
+
+
+--***********************************
+--Sequence creation
+--**********************************
+CREATE SEQUENCE Feed_Back
+	START WITH 3001
+		INCREMENT BY 1;
+
+
+
+--***********************************
+--Inserting values INTO customer
+--**********************************
+--INSERT INTO customer VALUES
+        (&cust_id, '&cust_name', '&email' , &mobile, '&address');
+
+--OR
+
+INSERT INTO customer VALUES (2001, 'Rohini', 'rohini@capgemini.com' , 8989898989, 'Pune');
+
+INSERT INTO customer VALUES (2002, 'Satyen', 'satyen@capgemini.com' , 8765457899, 'Mumbai');
+
+
+INSERT INTO customer VALUES (2003, 'Rashmi', 'rashmi@capgemini.com' , 9867563423, 'Bangalore');
+
+
+INSERT INTO customer VALUES (2004, 'Bala', 'bala@capgemini.com' , 7856432311, 'Chennai');
+
+
+
+--***********************************
+--Inserting values INTO Feedback
+--**********************************
+--INSERT INTO Feedback VALUES
+        (&t_id,SYSDATE,&p_code,&t_quantity);
+
+--OR
+
+
+INSERT INTO Feedback VALUES (3001,2001, 'TN 03 A1234', 'Sedan' , '26-JUN-14',8);
+
+
+INSERT INTO Feedback VALUES (3002,2001, 'KA 05 K3456', 'HatchBack' , '13-MAY-14',7);
+
+
+INSERT INTO Feedback VALUES (3003,2002, 'MA 15 M67891234', 'SmallCar' , '20-FEB-14',10);
+
+
+INSERT INTO Feedback VALUES (3004,2001, 'TN 07 H4567', 'Luxury' , '26-JUN-14',6);
+
+
+INSERT INTO Feedback VALUES (3005,2003, 'KA 12 Y5567', 'SUV' , '17-AUG-14',9);
+
+
+INSERT INTO Feedback VALUES (3006,2001, 'KL 09 O8989', 'Compact' , '10-JUL-14',4);
+
+
+
+
+
+
+--****************************************
+--PROCEDURE TO DISPLAY Customer Detaisl
+--****************************************
+
+CREATE OR REPLACE PROCEDURE VehicleDetails(Vehc_Type FeedBack.Vehicle_Type%TYPE)
+
+IS
+
+V_Vehicle_NO FeedBack.Vehicle_NO%TYPE;
+V_cust_name customer.cust_name%TYPE;
+V_email customer.email%TYPE;
+V_mobile customer.mobile%TYPE;
+V_address customer.address%TYPE;
+V_Vehicle_Type FeedBack.Vehicle_Type%TYPE;
+
+No_Type EXCEPTION;
+
+BEGIN
+
+
+	SELECT F.Vehicle_NO,C.cust_name, C.email,C.mobile,C.address, F.Vehicle_Type
+		INTO V_Vehicle_NO,V_cust_name,V_email,V_mobile,V_address,V_Vehicle_Type
+		FROM customer C, FeedBack F
+			WHERE C.cust_id=F.cust_id
+			AND F.Vehicle_Type = Vehc_Type;
+		
+	IF Vehc_Type IS NULL  THEN
+		RAISE No_Type;
+	ELSE
+
+	DBMS_OUTPUT.PUT_LINE('Vehicle NO       Customer Name    Email              Mobile      Address ');
+	DBMS_OUTPUT.PUT_LINE(V_Vehicle_NO||'      '||V_cust_name||'       '||V_email||'  '||V_mobile||' '|| V_address);
+
+	END IF;
+
+EXCEPTION
+    	WHEN NO_DATA_FOUND THEN
+  		DBMS_OUTPUT.PUT_LINE('No Details exits');
+   	WHEN No_Type THEN
+   		DBMS_OUTPUT.PUT_LINE('Vehicle Type '||Vehc_Type||' Not has Serviced at This Service Facility.');
+   	WHEN OTHERS THEN
+   		DBMS_OUTPUT.PUT_LINE('Other exception occurs');
+END;
+
+
+
+--***********************************
+--To Call Procedure in BEGIN Block 
+--**********************************
+BEGIN
+	VehicleDetails('&Vehc_Type');
+END;

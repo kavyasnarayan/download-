@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- Simple Types -->
+  <xs:simpleType  name="AgeType">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="21"/>
+      <xs:maxInclusive value="58"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType  name="GenderType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Male"/>
+      <xs:enumeration value="Female"/>
+      <xs:enumeration value="Transgender"/>
+     </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType  name="MobileNumberType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="0[0-9]{5}-[0-9]{5}" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Simple Elements -->
+  <xs:element name="Id" type="xs:int" />
+  <xs:element name="Name" type="xs:string" />
+  <xs:element name="Age" type="xs:int" />
+  <xs:element name="Gender" type="xs:string" />
+  <xs:element name="MobileNumber" type="MobileNumberType" />
+
+
+  <xs:element name="Employee">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Id"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Age"/>
+        <xs:element ref="Gender"/>
+        <xs:element ref="MobileNumber"  maxOccurs="2"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="IGATE">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Employee" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+
+</xs:schema>

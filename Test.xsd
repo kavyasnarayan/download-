@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:element name="serial_no" type="xs:int"/>
+<xs:element name="name" type="xs:string"/>
+<xs:element name="description" type="xs:string"/>
+<xs:element name="price" type="xs:float"/>
+
+
+<xs:element name="product">
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="serial_no"/>
+<xs:element ref="name"/>
+<xs:element ref="description"/>
+<xs:element ref="price"/>
+</xs:sequence>
+
+
+</xs:complexType>
+
+</xs:element>
+<xs:element name="productreport">
+<xs:complexType>
+<xs:sequence>
+<xs:element ref="product"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+
+
+</xs:schema>
