@@ -1,0 +1,45 @@
+
+--****************************************
+--PROCEDURE TO INSERT consumer bill amount.... Details
+--****************************************
+cl scr
+CREATE OR REPLACE PROCEDURE ElectricityBill(p_consumerNo electricity_Consumer.consumerNo%TYPE)
+
+IS
+v_totalBill NUMBER;
+v_UnitsConsumed electricity_Consumer.UnitsConsumed%TYPE;
+
+Lessthan_Zero_Error EXCEPTION;
+
+BEGIN
+SELECT UnitsConsumed INTO v_UnitsConsumed 
+	FROM electricity_Consumer 
+		WHERE consumerNo=p_consumerNo;
+		
+		
+		IF(v_UnitsConsumed>0) THEN
+			IF(v_UnitsConsumed>100) THEN
+				v_totalBill:=((100*2.96)+((v_UnitsConsumed-100)*5.56)); --Calculating Charges for units above 100
+			ELSE
+				v_totalBill:=(v_UnitsConsumed*2.96);  --Calculating Charges for units below 100
+			END IF;
+		ELSE
+			RAISE Lessthan_Zero_Error;
+		END IF;
+		DBMS_OUTPUT.PUT_LINE('The bill Amount inserted into Table Electricity_bill '||v_totalBill);
+			INSERT INTO Electricity_bill VALUES (BillID_Seq.nextval,p_consumerNo,v_totalBill,SYSDATE);
+
+	
+
+EXCEPTION
+	WHEN NO_DATA_FOUND THEN
+  		DBMS_OUTPUT.PUT_LINE('Consumer Does not Exist');
+   	WHEN Lessthan_Zero_Error THEN
+   		DBMS_OUTPUT.PUT_LINE('Units Consumed Should be Greater Than 0');
+   	WHEN OTHERS THEN
+   		DBMS_OUTPUT.PUT_LINE('Other exception occurs');
+END;
+
+
+
+INSERT INTO Electricity_bill VALUES (BillID_Seq,p_consumerNo,v_totalBill,SYSDATE);
